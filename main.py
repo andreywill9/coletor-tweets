@@ -26,16 +26,17 @@ client = twitter.Client(bearer_token, consumer_key, consumer_secret, access_toke
 candidatos = (['lula', 'Luiz Inacio Lula da Silva'], ['bolsonaro', 'Jair Messias Bolsonaro'], ['ciro', 'Ciro Gomes'],
               ['tebet', 'Simone Tebet'], ['doria', 'Joao Doria'], ['janones', 'Andre Janones'])
 usuarios_buscados = {}
+resultado_buscas = []
 
 for entrada in candidatos:
     query = gerar_query(entrada)
     tweets_buscados = client.search_recent_tweets(query=query, max_results=100,
                                                   start_time=data_inicial, end_time=data_final,
-                                                  tweet_fields=['author_id', 'created_at', 'public_metrics', 'source'])
-    print('Quantidade tweets: ' + str(len(tweets_buscados.data)))
-    for tweet in tweets_buscados.data:
+                                                  tweet_fields=['author_id', 'created_at', 'public_metrics', 'source']).data
+    resultado_buscas.extend(tweets_buscados)
+    for tweet in tweets_buscados:
         if tweet.author_id not in usuarios_buscados:
             usuarios_buscados[tweet.author_id] = client.get_user(id=tweet.author_id,
                                                                  user_fields=['created_at', 'verified',
-                                                                              'public_metrics', 'location'])
+                                                                              'public_metrics', 'location']).data
 
