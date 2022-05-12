@@ -32,7 +32,7 @@ resultado_buscas = []
 
 for entrada in candidatos:
     query = gerar_query(entrada)
-    tweets_buscados = client.search_recent_tweets(query=query, max_results=10,
+    tweets_buscados = client.search_recent_tweets(query=query, max_results=100,
                                                   start_time=data_inicial, end_time=data_final,
                                                   tweet_fields=['author_id', 'created_at', 'public_metrics', 'source']).data
     for tweet in tweets_buscados:
@@ -43,7 +43,7 @@ for entrada in candidatos:
         usuario = usuarios_buscados.get(tweet.author_id)
         linha = [0 for j in range(13)]
         linha[0] = tweet.id
-        linha[1] = tweet.created_at
+        linha[1] = tweet.created_at.strftime(formato_data)
         linha[2] = tweet.text
         linha[3] = tweet.public_metrics.get('retweet_count')
         linha[4] = tweet.public_metrics.get('reply_count')
@@ -52,7 +52,7 @@ for entrada in candidatos:
         linha[7] = usuario.id
         linha[8] = usuario.username
         linha[9] = usuario.name
-        linha[10] = usuario.created_at
+        linha[10] = usuario.created_at.strftime(formato_data)
         linha[11] = usuario.public_metrics.get('followers_count')
         linha[12] = usuario.verified
         resultado_buscas.append(linha)
