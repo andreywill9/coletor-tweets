@@ -21,13 +21,15 @@ def gerar_query(entradas: list):
 
 
 formato_data = '%Y-%m-%dT%H:%M:01Z'
-data_inicial = (date.datetime.now() - date.timedelta(hours=4)).strftime(formato_data)
+data_inicial = (date.datetime.now() - date.timedelta(hours=2)).strftime(formato_data)
 data_final = date.datetime.now().strftime(formato_data)
 
 client = twitter.Client(bearer_token, consumer_key, consumer_secret, access_token, access_token_secret)
 
-candidatos = (['lula', 'Luiz Inacio Lula da Silva'], ['bolsonaro', 'Jair Messias Bolsonaro'], ['ciro', 'Ciro Gomes'],
-              ['tebet', 'Simone Tebet'], ['doria', 'Joao Doria'], ['janones', 'Andre Janones'])
+candidatos = (['lula', 'Luiz Inacio Lula da Silva'], ['bolsonaro', 'Jair Messias Bolsonaro'],
+              ['ciro', 'Ciro Gomes'], ['tebet', 'Simone Tebet'], ['doria', 'Joao Doria'],
+              ['janones', 'Andre Janones'], ['marçal', 'Pablo Marçal'], ['sergio moro', 'Sérgio Moro'])
+
 todos_tweets = []
 usuarios_buscados = {}
 resultado_buscas = []
@@ -36,12 +38,19 @@ print('Iniciando busca dos Tweets...')
 for entrada in candidatos:
     print('Buscando Tweets sobre: ' + entrada[0] + '...')
     query = gerar_query(entrada)
-    tweets_buscados = client.search_recent_tweets(query=query, max_results=70,
+    tweets_buscados = client.search_recent_tweets(query=query, max_results=40,
                                                   start_time=data_inicial, end_time=data_final,
-                                                  tweet_fields=['author_id', 'created_at', 'public_metrics', 'source']).data
-    todos_tweets.extend(tweets_buscados)
-    print('Tweets buscados com sucesso!')
-    print('Indo para próximo candidato...')
+                                                  tweet_fields=['author_id', 'created_at', 'public_metrics',
+                                                                'source']).data
+
+    if tweets_buscados is not None:
+        todos_tweets.extend(tweets_buscados)
+        print('Tweets buscados com sucesso!')
+        print('Indo para próximo candidato...')
+    else:
+        print('candidado sem tweets no periodo de tempo buscado')
+        print('Indo para próximo candidato...')
+        pass
 print('Tweets de todos os cadidatos buscados com sucesso!')
 print('Quantidade de Tweets buscados: ' + str(len(todos_tweets)))
 
@@ -76,7 +85,9 @@ print('Todos autores buscados!')
 print('Gerando arquivo xlsx...')
 dataframe = pd.DataFrame(resultado_buscas)
 dataframe.columns = ['id_tweet', 'data_tweet', 'texto', 'retweets', 'respostas', 'likes', 'fonte', 'id_usuario',
-                     'arroba_usuario', 'nome_usuario', 'data_criacao_usuario', 'seguidores_usuario', 'usuario_verificado']
-dataframe.to_excel(data_final + '.xlsx')
-print('Arquivo gerado com sucesso!')
+                     'arroba_usuario', 'nome_usuario', 'data_criacao_usuario', 'seguidores_usuario',
+                     'usuario_verificado']
 
+nome_data = str(date.datetime.now().strftime('%m%d_%H_%M_%S'))
+
+dataframe.to_excel(f'dados{nome_data}.xlsx')
