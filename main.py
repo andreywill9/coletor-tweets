@@ -21,14 +21,14 @@ def gerar_query(entradas: list):
 
 
 formato_data = '%Y-%m-%dT%H:%M:01Z'
-data_inicial = (date.datetime.now() - date.timedelta(hours=2)).strftime(formato_data)
+data_inicial = (date.datetime.now() - date.timedelta(hours=4)).strftime(formato_data)
 data_final = date.datetime.now().strftime(formato_data)
 
 client = twitter.Client(bearer_token, consumer_key, consumer_secret, access_token, access_token_secret)
 
 candidatos = (['lula', 'Luiz Inacio Lula da Silva'], ['bolsonaro', 'Jair Messias Bolsonaro'],
-              ['ciro', 'Ciro Gomes'], ['tebet', 'Simone Tebet'], ['doria', 'Joao Doria'],
-              ['janones', 'Andre Janones'], ['marçal', 'Pablo Marçal'], ['sergio moro', 'Sérgio Moro'])
+              ['ciro', 'Ciro Gomes'], ['tebet', 'Simone Tebet'], ['janones', 'Andre Janones'],
+              ['marçal', 'Pablo Marçal'])
 
 todos_tweets = []
 usuarios_buscados = {}
@@ -38,7 +38,7 @@ print('Iniciando busca dos Tweets...')
 for entrada in candidatos:
     print('Buscando Tweets sobre: ' + entrada[0] + '...')
     query = gerar_query(entrada)
-    tweets_buscados = client.search_recent_tweets(query=query, max_results=40,
+    tweets_buscados = client.search_recent_tweets(query=query, max_results=37,
                                                   start_time=data_inicial, end_time=data_final,
                                                   tweet_fields=['author_id', 'created_at', 'public_metrics',
                                                                 'source']).data
@@ -48,14 +48,14 @@ for entrada in candidatos:
         print('Tweets buscados com sucesso!')
         print('Indo para próximo candidato...')
     else:
-        print('candidado sem tweets no periodo de tempo buscado')
+        print('candidato sem tweets relacionados no período de tempo buscado')
         print('Indo para próximo candidato...')
         pass
-print('Tweets de todos os cadidatos buscados com sucesso!')
+print('Tweets de todos os candidatos buscados com sucesso!')
 print('Quantidade de Tweets buscados: ' + str(len(todos_tweets)))
 
-print('Aguardando 20 minutos para buscar informações dos autores...')
-time.sleep(1200)
+#print('Aguardando 20 minutos para buscar informações dos autores...')
+#time.sleep(1200)
 
 print('Percorrendo cada um dos Tweets para buscar informações do autor...')
 for tweet in todos_tweets:
