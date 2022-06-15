@@ -83,7 +83,7 @@ for tweet in todos_tweets:
     resultado_buscas.append(linha)
 print('Todos autores buscados!')
 
-print('Gerando arquivo csv...')
+print('Gerando arquivo CSV...')
 dataframe = pd.DataFrame(resultado_buscas)
 dataframe.columns = ['id_tweet', 'data_tweet', 'texto', 'retweets', 'respostas', 'likes', 'fonte', 'id_usuario',
                      'arroba_usuario', 'nome_usuario', 'data_criacao_usuario', 'seguidores_usuario',
