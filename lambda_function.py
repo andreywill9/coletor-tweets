@@ -1,12 +1,12 @@
 import os
-import time
+import json
 import datetime as date
 import pandas as pd
 import json
 import tweepy as twitter
 import boto3
 
-from io import StringIO  # python3; python2: BytesIO
+from io import StringIO
 
 bearer_token = os.environ['TWITTER_TOKEN']
 consumer_key = os.environ['CONSUMER_KEY']
@@ -83,7 +83,7 @@ for tweet in todos_tweets:
     resultado_buscas.append(linha)
 print('Todos autores buscados!')
 
-print('Gerando arquivo CSV...')
+print('Gerando arquivo JSON...')
 dataframe = pd.DataFrame(resultado_buscas)
 dataframe.columns = ['id_tweet', 'data_tweet', 'texto', 'retweets', 'respostas', 'likes', 'fonte', 'id_usuario',
                      'arroba_usuario', 'nome_usuario', 'data_criacao_usuario', 'seguidores_usuario',
@@ -96,10 +96,10 @@ def lambda_handler(event, context):
     # TODO implement
     s3 = boto3.client("s3")
     bucket = 'base-tweets-tgi'
-    csv_buffer = StringIO()
-    dataframe.to_csv(csv_buffer, index=False, sep=';', header=True)
+    json_buffer = StringIO()
+    dataframe.to_json(json_buffer, force_ascii=False, orient="records")
     s3_resource = boto3.resource('s3')
-    s3_resource.Object(bucket, f'{nome_data}.csv').put(Body=csv_buffer.getvalue())
+    s3_resource.Object(bucket, f'{nome_data}.json').put(Body=json_buffer.getvalue())
 
     return {
         'statusCode': 200,
